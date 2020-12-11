@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by kfteng on 2020/8/27 11:11:23
@@ -49,7 +50,7 @@ public class RedissonAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
@@ -68,19 +69,22 @@ public class RedissonAutoConfiguration {
         return new RedissonConnectionFactory(redisson);
     }
 
+    @SuppressWarnings("all")
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean(RedissonClient.class)
-    public RedissonClient redisson() throws IOException {
-        Config config = null;
+    public RedissonClient redisson() {
+        Config config;
         Method clusterMethod = ReflectionUtils.findMethod(RedisProperties.class, "getCluster");
         Method timeoutMethod = ReflectionUtils.findMethod(RedisProperties.class, "getTimeout");
+        assert timeoutMethod != null;
         Object timeoutValue = ReflectionUtils.invokeMethod(timeoutMethod, redisProperties);
         int timeout;
         if(null == timeoutValue){
             timeout = 0;
         }else if (!(timeoutValue instanceof Integer)) {
             Method millisMethod = ReflectionUtils.findMethod(timeoutValue.getClass(), "toMillis");
-            timeout = ((Long) ReflectionUtils.invokeMethod(millisMethod, timeoutValue)).intValue();
+            assert millisMethod != null;
+            timeout = ((Long) Objects.requireNonNull(ReflectionUtils.invokeMethod(millisMethod, timeoutValue))).intValue();
         } else {
             timeout = (Integer)timeoutValue;
         }
@@ -100,13 +104,15 @@ public class RedissonAutoConfiguration {
             }
         } else if (redisProperties.getSentinel() != null) {
             Method nodesMethod = ReflectionUtils.findMethod(RedisProperties.Sentinel.class, "getNodes");
+            assert nodesMethod != null;
             Object nodesValue = ReflectionUtils.invokeMethod(nodesMethod, redisProperties.getSentinel());
 
             String[] nodes;
             if (nodesValue instanceof String) {
                 nodes = convert(Arrays.asList(((String)nodesValue).split(",")));
             } else {
-                nodes = convert((List<String>)nodesValue);
+                assert nodesValue != null;
+                nodes = convert((List<String>) nodesValue);
             }
 
             config = new Config();
@@ -147,7 +153,7 @@ public class RedissonAutoConfiguration {
     }
 
     private String[] convert(List<String> nodesObject) {
-        List<String> nodes = new ArrayList<String>(nodesObject.size());
+        List<String> nodes = new ArrayList<>(nodesObject.size());
         for (String node : nodesObject) {
             if (!node.startsWith("redis://") && !node.startsWith("rediss://")) {
                 nodes.add("redis://" + node);
@@ -155,13 +161,12 @@ public class RedissonAutoConfiguration {
                 nodes.add(node);
             }
         }
-        return nodes.toArray(new String[nodes.size()]);
+        return nodes.toArray(new String[0]);
     }
 
     private InputStream getConfigStream() throws IOException {
         Resource resource = ctx.getResource(redissonProperties.getConfig());
-        InputStream is = resource.getInputStream();
-        return is;
+        return resource.getInputStream();
     }
 
 
