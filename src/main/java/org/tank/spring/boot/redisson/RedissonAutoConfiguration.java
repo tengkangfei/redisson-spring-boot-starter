@@ -4,6 +4,8 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,6 +40,8 @@ import java.util.Objects;
 @EnableConfigurationProperties({RedissonProperties.class, RedisProperties.class})
 public class RedissonAutoConfiguration {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedissonAutoConfiguration.class);
+
     @Autowired
     private RedissonProperties redissonProperties;
 
@@ -52,6 +56,7 @@ public class RedissonAutoConfiguration {
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
+        logger.info("Redisson初始化RedisTemplate完成");
         return template;
     }
 
@@ -60,6 +65,7 @@ public class RedissonAutoConfiguration {
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
         template.setConnectionFactory(redisConnectionFactory);
+        logger.info("Redisson初始化stringRedisTemplate完成");
         return template;
     }
 
