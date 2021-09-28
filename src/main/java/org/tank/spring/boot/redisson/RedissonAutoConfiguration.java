@@ -85,17 +85,17 @@ public class RedissonAutoConfiguration {
         assert timeoutMethod != null;
         Object timeoutValue = ReflectionUtils.invokeMethod(timeoutMethod, redisProperties);
         int timeout;
-        if(null == timeoutValue){
+        if (null == timeoutValue) {
             timeout = 0;
-        }else if (!(timeoutValue instanceof Integer)) {
+        } else if (!(timeoutValue instanceof Integer)) {
             Method millisMethod = ReflectionUtils.findMethod(timeoutValue.getClass(), "toMillis");
             assert millisMethod != null;
             timeout = ((Long) Objects.requireNonNull(ReflectionUtils.invokeMethod(millisMethod, timeoutValue))).intValue();
         } else {
-            timeout = (Integer)timeoutValue;
+            timeout = (Integer) timeoutValue;
         }
 
-        if (redissonProperties.getConfig() != null) {
+        if (redissonProperties.getConfig() != null && redissonProperties.getConfig().length() > 0) {
             try {
                 InputStream is = getConfigStream();
                 config = Config.fromJSON(is);
@@ -115,7 +115,7 @@ public class RedissonAutoConfiguration {
 
             String[] nodes;
             if (nodesValue instanceof String) {
-                nodes = convert(Arrays.asList(((String)nodesValue).split(",")));
+                nodes = convert(Arrays.asList(((String) nodesValue).split(",")));
             } else {
                 assert nodesValue != null;
                 nodes = convert((List<String>) nodesValue);
@@ -144,7 +144,7 @@ public class RedissonAutoConfiguration {
             config = new Config();
             String prefix = "redis://";
             Method method = ReflectionUtils.findMethod(RedisProperties.class, "isSsl");
-            if (method != null && (Boolean)ReflectionUtils.invokeMethod(method, redisProperties)) {
+            if (method != null && (Boolean) ReflectionUtils.invokeMethod(method, redisProperties)) {
                 prefix = "rediss://";
             }
 
