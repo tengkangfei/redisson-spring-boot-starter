@@ -72,6 +72,7 @@ public class RedissonAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(RedisConnectionFactory.class)
     public RedissonConnectionFactory redissonConnectionFactory(RedissonClient redisson) {
+        logger.info("Redisson初始化RedissonConnectionFactory完成");
         return new RedissonConnectionFactory(redisson);
     }
 
