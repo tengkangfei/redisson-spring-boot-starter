@@ -10,6 +10,8 @@ public class RedissonProperties {
 
     private String config;
 
+    private String ext;
+
     public String getConfig() {
         return config;
     }
@@ -18,4 +20,11 @@ public class RedissonProperties {
         this.config = config;
     }
 
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
 }
