@@ -163,6 +163,9 @@ public class RedissonAutoConfiguration {
     }
 
     private String[] convert(List<String> nodesObject) {
+        if(nodesObject == null){
+            return new String[0];
+        }
         List<String> nodes = new ArrayList<>(nodesObject.size());
         for (String node : nodesObject) {
             if (!node.startsWith("redis://") && !node.startsWith("rediss://")) {
