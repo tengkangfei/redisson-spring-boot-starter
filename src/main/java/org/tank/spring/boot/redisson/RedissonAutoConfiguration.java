@@ -80,9 +80,6 @@ public class RedissonAutoConfiguration {
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean(RedissonClient.class)
     public RedissonClient redisson() {
-        if(redisProperties == null){
-            return null;
-        }
         Config config;
         Method clusterMethod = ReflectionUtils.findMethod(RedisProperties.class, "getCluster");
         Method timeoutMethod = ReflectionUtils.findMethod(RedisProperties.class, "getTimeout");
@@ -97,6 +94,9 @@ public class RedissonAutoConfiguration {
             timeout = ((Long) Objects.requireNonNull(ReflectionUtils.invokeMethod(millisMethod, timeoutValue))).intValue();
         } else {
             timeout = (Integer) timeoutValue;
+        }
+        if(redisProperties == null){
+            return null;
         }
 
         if (redissonProperties.getConfig() != null && redissonProperties.getConfig().length() > 0) {
