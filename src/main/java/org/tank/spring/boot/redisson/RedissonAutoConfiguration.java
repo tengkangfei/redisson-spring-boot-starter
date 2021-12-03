@@ -174,6 +174,9 @@ public class RedissonAutoConfiguration {
                 nodes.add(node);
             }
         }
+        if(nodes.size() == 0){
+            return new String[0];
+        }
         return nodes.toArray(new String[0]);
     }
 
