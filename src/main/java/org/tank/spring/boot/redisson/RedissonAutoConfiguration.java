@@ -95,7 +95,8 @@ public class RedissonAutoConfiguration {
         } else {
             timeout = (Integer) timeoutValue;
         }
-        if(redisProperties == null){
+        if (redisProperties == null) {
+            logger.error("redisProerties is NULL ctx:{}", ctx.getApplicationName());
             return null;
         }
 
@@ -163,7 +164,7 @@ public class RedissonAutoConfiguration {
     }
 
     private String[] convert(List<String> nodesObject) {
-        if(nodesObject == null){
+        if (nodesObject == null) {
             return new String[0];
         }
         List<String> nodes = new ArrayList<>(nodesObject.size());
@@ -174,7 +175,7 @@ public class RedissonAutoConfiguration {
                 nodes.add(node);
             }
         }
-        if(nodes.size() == 0){
+        if (nodes.size() == 0) {
             return new String[0];
         }
         return nodes.toArray(new String[0]);
