@@ -60,6 +60,8 @@ public class RedissonAutoConfiguration {
         logger.info("Redisson初始化RedisTemplate完成");
         if(redisConnectionFactory instanceof JedisConnectionFactory){
             logger.info("初始化的是Jedis");
+        } else{
+            logger.info("初始化的不是Jedis");
         }
         return template;
     }
