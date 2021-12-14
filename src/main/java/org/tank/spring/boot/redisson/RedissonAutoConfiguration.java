@@ -156,6 +156,7 @@ public class RedissonAutoConfiguration {
             String prefix = "redis://";
             Method method = ReflectionUtils.findMethod(RedisProperties.class, "isSsl");
             if (method != null && (Boolean) ReflectionUtils.invokeMethod(method, redisProperties)) {
+                logger.info("使用了rediss的方式接入redis");
                 prefix = "rediss://";
             }
 
