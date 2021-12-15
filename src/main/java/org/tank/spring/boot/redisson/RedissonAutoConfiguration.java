@@ -179,6 +179,7 @@ public class RedissonAutoConfiguration {
             if (!node.startsWith("redis://") && !node.startsWith("rediss://")) {
                 nodes.add("redis://" + node);
             } else {
+                logger.info("add 原本的Node节点 :{}",node);
                 nodes.add(node);
             }
         }
